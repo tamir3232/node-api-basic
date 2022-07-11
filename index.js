@@ -7,6 +7,9 @@ const app = express()
 const port = process.env.PORT || 8000
 const USER_DATA_PATH = "./data/users.json"
 
+app.use(express.json())
+app.use(express.urlencoded({extended: false}))
+
 app.get('/hello', (req, res, next) => {
     return res.status(200).json({
         message: 'Hello World from hot reload'
@@ -42,6 +45,7 @@ app.get('/users', (req, res, next) => {
 
 // create new user
 app.post('/users', (req, res, next) => {
+    console.log(req.body)
     // read file users.json
 
     // tambah data baru ke array of user
@@ -55,6 +59,8 @@ app.post('/users', (req, res, next) => {
 
 // update existing user
 app.patch('/users/:id', (req, res, next) => {
+    console.log(req.params.id)
+    console.log(req.body)
     // nyari data dengan id tertentu ada atau engga
 
     // kalo ngga ada respon data not found
