@@ -127,15 +127,34 @@ app.patch('/users/:id', (req, res, next) => {
 
 // delete user
 app.delete('/users/:id', (req, res, next) => {
+    let usersAsString = fs.readFileSync(USER_DATA_PATH).toString()
+
+    // parse data string jadi json
+    const users = JSON.parse(usersAsString)
+
     // cari datanya by id
+    const indexOfDataExist = users.findIndex((user) => Number(user.id) === Number(req.params.id))
 
     // datanya ga ketemu => respon not found
+    if (indexOfDataExist < 0) {
+        return res.status(404).json({
+            message: 'user with this id not found'
+        })
+    }
 
     // kalo datanya ketemu baru kita hapus data tersebut
+    users.splice(indexOfDataExist, 1)
 
+    // konversi data array/object ke string
+    usersAsString = JSON.stringify(users)
+    
     // simpan data ke users.json
+    fs.writeFileSync(USER_DATA_PATH, usersAsString)
 
     // dimunculin respon bahwa data berhasil dihapus
+    return res.status(200).json({
+        message: 'success remove user'
+    })
 })
 
 app.listen(port, () => {
