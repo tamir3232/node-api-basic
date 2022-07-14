@@ -47,14 +47,30 @@ app.get('/users', (req, res, next) => {
 app.post('/users', (req, res, next) => {
     console.log(req.body)
     // read file users.json
+    let usersAsString = fs.readFileSync(USER_DATA_PATH).toString()
+
+    // parse data string jadi json
+    const users = JSON.parse(usersAsString)
+    
+    const newUser = {
+        id: Date.now(),
+        ...req.body
+    }
 
     // tambah data baru ke array of user
+    users.push(newUser)
 
     // konversi data array/object ke string
+    usersAsString = JSON.stringify(users)
 
     // ditulis ulang data baru ke file users.json
+    fs.writeFileSync(USER_DATA_PATH, usersAsString)
 
-      // dimunculin respon bahwa data berhasil dibuat
+    // dimunculin respon bahwa data berhasil dibuat
+    return res.status(201).json({
+        message: 'success create user',
+        data: users
+    })
 })
 
 // update existing user
