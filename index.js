@@ -94,18 +94,30 @@ app.patch('/users/:id', (req, res, next) => {
     }
 
     // kalo ada, kita update data dari request
+    // if (req.body.full_name) {
+    //     users[indexOfDataExist].full_name = req.body.full_name
+    // }
+
+    // if (req.body.address) {
+    //     users[indexOfDataExist].address = req.body.address
+    // }
+
+    // if (req.body.age) {
+    //     users[indexOfDataExist].age = req.body.age
+    // }
+
     users[indexOfDataExist] = {
         ...users[indexOfDataExist],
         ...req.body
     }
 
     // baju = {warna: 'ungu', ukuran: m}
-    // pengganti = {warna: 'merah'}
+    // pengganti = {warna: 'merah', bahan: 'katun'}
 
     // baju = {...baju} // => {warna: 'ungu', ukuran: m}
 
     // newBaju = {...baju, ...pengganti} // => {warna: 'merah', ukuran: m}
-    // newBaju = { ukuran: m, warna: 'merah'}
+    // newBaju = {warna: 'ungu', ukuran: m, warna: 'merah',  bahan: 'katun'} // => { ukuran: m, warna: 'merah',  bahan: 'katun'}
 
 
     // users[indexOfDataExist].full_name = req.body.full_name
