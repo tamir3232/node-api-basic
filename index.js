@@ -51,7 +51,7 @@ app.post('/users', (req, res, next) => {
 
     // parse data string jadi json
     const users = JSON.parse(usersAsString)
-    
+
     const newUser = {
         id: Date.now(),
         ...req.body
@@ -77,15 +77,52 @@ app.post('/users', (req, res, next) => {
 app.patch('/users/:id', (req, res, next) => {
     console.log(req.params.id)
     console.log(req.body)
+    
+    let usersAsString = fs.readFileSync(USER_DATA_PATH).toString()
+
+    // parse data string jadi json
+    const users = JSON.parse(usersAsString)
+
     // nyari data dengan id tertentu ada atau engga
+    const indexOfDataExist = users.findIndex((user) => Number(user.id) === Number(req.params.id))
 
     // kalo ngga ada respon data not found
+    if (indexOfDataExist < 0) {
+        return res.status(404).json({
+            message: 'user with this id not found'
+        })
+    }
 
     // kalo ada, kita update data dari request
+    users[indexOfDataExist] = {
+        ...users[indexOfDataExist],
+        ...req.body
+    }
+
+    // baju = {warna: 'ungu', ukuran: m}
+    // pengganti = {warna: 'merah'}
+
+    // baju = {...baju} // => {warna: 'ungu', ukuran: m}
+
+    // newBaju = {...baju, ...pengganti} // => {warna: 'merah', ukuran: m}
+    // newBaju = { ukuran: m, warna: 'merah'}
+
+
+    // users[indexOfDataExist].full_name = req.body.full_name
+    // users[indexOfDataExist].address = req.body.address
+    // users[indexOfDataExist].age = req.body.age
+
+    // konversi data array/object ke string
+    usersAsString = JSON.stringify(users)
 
     // save ulang data ke users.json
+    fs.writeFileSync(USER_DATA_PATH, usersAsString)
 
-      // dimunculin respon bahwa data berhasil diupdate
+
+    return res.status(200).json({
+        message: 'user berhasil diupdate',
+        data: users
+    })
 })
 
 // delete user
