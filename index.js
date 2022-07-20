@@ -1,7 +1,18 @@
 require('dotenv').config()
 
 const express = require('express')
-const { logger, logParam } = require('./middlewares/logger')
+const { logParam } = require('./middlewares/logger')
+const winston = require('winston');
+
+const logger = winston.createLogger({
+    level: 'info',
+    format: winston.format.json(),
+    defaultMeta: { service: 'order-service' },
+    transports: [
+      new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
+    ],
+});
+
 const userRouter = require('./routes/users')
 
 const app = express()
@@ -10,7 +21,6 @@ const port = process.env.PORT || 8000
 
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))
-app.use(logger)
 app.use(logParam)
 
 app.get('/hello', (req, res, next) => {
@@ -30,7 +40,7 @@ app.use('*', (req, res, next) => {
 
 // error middleware
 app.use((err, req, res, next) => {
-    console.log(err)
+    logger.error(JSON.stringify(err))
 
     const status = err.code || 500
     const message = err.message || 'internal server error'
