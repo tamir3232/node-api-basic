@@ -1,9 +1,11 @@
 require('dotenv').config()
 
 const express = require('express')
+require('express-group-routes');
 const { logParam } = require('./middlewares/logger')
 const winston = require('winston');
 const { combine, timestamp, label, prettyPrint } = winston.format;
+const path = require('path')
 
 const logger = winston.createLogger({
     format: combine(
@@ -23,9 +25,9 @@ const userRouter = require('./routes/users')
 const app = express()
 const port = process.env.PORT || 8000
 
-
 app.use(express.json())
 app.use(express.urlencoded({extended: false}))
+app.use(express.static(path.join('.', 'public')))
 app.use(logParam)
 
 app.get('/hello', (req, res, next) => {
@@ -34,7 +36,9 @@ app.get('/hello', (req, res, next) => {
     })
 })
 
-app.use('/users', userRouter)
+app.group('/api/v1', (router) => {
+    router.use('/users', userRouter)
+})
 
 // 404 middleware
 app.use('*', (req, res, next) => {
