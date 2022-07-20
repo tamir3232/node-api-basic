@@ -3,10 +3,15 @@ require('dotenv').config()
 const express = require('express')
 const { logParam } = require('./middlewares/logger')
 const winston = require('winston');
+const { combine, timestamp, label, prettyPrint } = winston.format;
 
 const logger = winston.createLogger({
+    format: combine(
+        label({ label: 'right meow!' }),
+        timestamp(),
+        prettyPrint()
+    ),
     level: 'info',
-    format: winston.format.json(),
     defaultMeta: { service: 'order-service' },
     transports: [
       new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
